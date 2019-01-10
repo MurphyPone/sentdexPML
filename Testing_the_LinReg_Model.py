@@ -2,10 +2,22 @@ from statistics import mean
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import style
+import random
 
-# init dataset
-x_vals = np.array([1,2,3,4,5,6], dtype=np.float64)
-y_vals = np.array([5,4,6,5,6,7], dtype=np.float64)
+# creates a random dataset for us to use
+# @numPoints = int; the size of the dataset
+# @variance = int; the volatility
+# @step = double; the step size between y values
+# @correlation = int; +1, -1, multiplied by the step to indicate a correlation
+def create_dataset(numPoints, variance, step=3, correlation=1):
+    val = 1
+    ys = []
+    for i in range(numPoints):
+        y = val + random.randrange(-variance, variance)
+        ys.append(y)
+        val += step * correlation
+    xs = [i for i in range(len(ys))]
+    return np.array(xs, dtype=np.float64), np.array(ys, dtype=np.float64)
 
 # Calculates the coefficients for the equation of line of best fit
 def bfl_slope_and_intercept(xs, ys):
@@ -23,6 +35,9 @@ def coef_determination(ys_original, ys_line):
     squared_error_y_mean = squared_error(ys_original, y_mean_line)
     return 1 - (squared_error_regression / squared_error_y_mean)
 
+# init dataset
+x_vals, y_vals = create_dataset(40,20, 2, -1)
+
 m, b = bfl_slope_and_intercept(x_vals, y_vals)
 print(m, b)
 
@@ -38,6 +53,5 @@ print(r_squared)
 #configure, display plot
 style.use('fivethirtyeight')
 plt.scatter(x_vals, y_vals)
-plt.scatter(x_predict, y_predict, color='g')
 plt.plot(x_vals, regression_line)
 plt.show()
